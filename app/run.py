@@ -8,7 +8,8 @@ from nltk.tokenize import word_tokenize
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-from sklearn.externals import joblib
+# from sklearn.externals import joblib
+import joblib
 from sqlalchemy import create_engine
 
 
@@ -26,11 +27,11 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('disaster_messages', engine)
 
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -42,9 +43,20 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
-    
+    category_counts = df.iloc[:, 4:].sum()
+    category_names = list(category_counts.index)
+
+    # Calculate the percentage of messages in each category by genre
+    genre_percentage_data = []
+    for category in category_names:
+        category_data = df[df[category] == 1]
+        category_genre_counts = category_data['genre'].value_counts()
+        category_genre_percentage = (category_genre_counts / category_genre_counts.sum())
+        genre_percentage_data.append(category_genre_percentage)
+
+    genre_percentage_df = pd.DataFrame(genre_percentage_data, index=category_names)
+
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
@@ -63,9 +75,38 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=genre_percentage_df['direct'],
+                    name='Direct'
+                ),
+                Bar(
+                    x=category_names,
+                    y=genre_percentage_df['news'],
+                    name='News'
+                ),
+                Bar(
+                    x=category_names,
+                    y=genre_percentage_df['social'],
+                    name='Social'
+                ),
+            ],
+            'layout': {
+                'title': 'Distribution of messages across categories and genres',
+                'yaxis': {
+                    'title': "Proporation"
+                },
+                'xaxis': {
+                    'title': "Category",
+                    'tickangle': 45
+                },
+                'barmode': 'stack'
+            }
         }
     ]
-    
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)

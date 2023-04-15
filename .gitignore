@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 app/.DS_Store
+data/YourDatabaseName.db
+
+app/run.py

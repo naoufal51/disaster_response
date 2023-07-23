@@ -7,8 +7,8 @@ def load_data(messages_filepath, categories_filepath):
     Load the messages and the categories data from csv files and merge them into one dataframe.
     
     Args:
-        messages_filepath: str, path to the messages csv file
-        categories_filepath: str, path to the categories csv file
+        messages_filepath (str): path to the messages csv file
+        categories_filepath (str): path to the categories csv file
         
     Returns:
         df: pandas dataframe, combined dataframe of messages and categories
@@ -40,8 +40,7 @@ def clean_data(df):
     categories = df['categories'].str.split(';', expand=True)
     
     # get the names of the categories from the first row and delete the last two characters
-    row = categories.iloc[0]
-    category_colnames = row.apply(lambda x: x[:-2])
+    category_colnames = categories.iloc[0].str[:-2]
     
     # rename the columns of categories
     categories.columns = category_colnames

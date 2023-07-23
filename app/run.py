@@ -6,7 +6,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 from flask import Flask
-from flask import render_template, request, jsonify
+from flask import render_template, request
 from plotly.graph_objs import Bar
 # from sklearn.externals import joblib
 import joblib
@@ -16,6 +16,15 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    """
+    Tokenize and lemmatize the disaster messages.
+    
+    Args:
+        text: string, disaster message to be processed (tokenized)
+    
+    Returns:
+        clean_tokens: list of strings, tokenized text
+    """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -38,7 +47,16 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
+    """
+    Displays visualizations of the data 
+    and allows the user to enter a message to classify.
     
+    Args:
+        None
+        
+    Returns:
+        Flask response object with rendered template 
+    """    
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
@@ -53,7 +71,6 @@ def index():
         category_genre_counts = category_data['genre'].value_counts()
         category_genre_percentage = (category_genre_counts / category_genre_counts.sum())
         genre_percentage_data.append(category_genre_percentage)
-
     genre_percentage_df = pd.DataFrame(genre_percentage_data, index=category_names)
 
     # create visuals
@@ -108,16 +125,24 @@ def index():
         }
     ]
     # encode plotly graphs in JSON
-    ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
-    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-    
+    ids = [f"graph-{i}" for i, _ in enumerate(graphs)]
+    graph_json = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)    
     # render web page with plotly graphs
-    return render_template('master.html', ids=ids, graphJSON=graphJSON)
+    return render_template('master.html', ids=ids, graphJSON=graph_json)
 
 
 # web page that handles user query and displays model results
 @app.route('/go')
 def go():
+    """
+    Handles user query and displays model results.
+    
+    Args:
+        None
+        
+    Returns:
+        Flask response object with rendered go.html template.
+    """
     # save user input in query
     query = request.args.get('query', '') 
 

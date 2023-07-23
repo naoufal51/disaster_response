@@ -1,18 +1,18 @@
 import sys
+import string
+import pickle
 import pandas as pd
 from sqlalchemy import create_engine
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-import string
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.metrics import classification_report
-from xgboost import XGBClassifier
-import pickle
 from sklearn.utils import parallel_backend
+from xgboost import XGBClassifier
 
 
 def load_data(database_filepath):
@@ -21,7 +21,7 @@ def load_data(database_filepath):
     
     Args:
         database_filepath: path to the sqlite distater messages database
-    
+        
     Returns:
         X: pandas dataframe containing the messages (Features)
         y: pandas dataframe containing the categories (Target)
@@ -29,53 +29,48 @@ def load_data(database_filepath):
     """
     # load data from database
     engine = create_engine(f'sqlite:///{database_filepath}')
-    df = pd.read_sql('disaster_messages', engine)
-    
+    disaster_messages = pd.read_sql('disaster_messages', engine)
+
     # define features and target variables X and Y
-    X = df['message']
-    Y = df.iloc[:, 4:]
+    X = disaster_messages['message']
+    Y = disaster_messages.iloc[:, 4:]
+
     # replace 2 with 1 in related column
     Y['related'] = Y['related'].replace(2,1)
-    
+
     # get category names
     category_names = Y.columns
-    
-    return X, Y, category_names
-    
 
+    return X, Y, category_names
 
 def tokenize(text):
     """Normalize, lemmatize, and tokenize the messages text
     
     Args:
-        text: string, message text to be processed (tokenized)
+        text: string, message text to be processed (tokenized)  
         
     Returns:
         tokens: list of strings, tokenized text
     """
     # Normalize text
     text = text.lower()
-    
+
     # Remove punctuation
     translator = str.maketrans('', '', string.punctuation) # This maps punctuation to None
     text = text.translate(translator) # This removes punctuation
-    
+
     # Get stop words
     stop_words = set(stopwords.words('english'))
-    
+
     # tokenize text
     tokens = word_tokenize(text)
     tokens = [w for w in tokens if w not in stop_words]
-    
+
     #lemmatize
     lemmatizer = nltk.WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(w) for w in tokens]
-    
-    return tokens
-    
-    
-    
 
+    return tokens
 
 def build_model():
     """
@@ -87,14 +82,13 @@ def build_model():
     Returns:
         cv: GridSearchCV object
     """
-    
     # create pipeline
     pipeline = Pipeline([
         ('vectorizer', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
         ('Classifier', MultiOutputClassifier(XGBClassifier()))
-    ])
-    
+    ])   
+
     # define the parameter for grid search
     parameters = {    
                 'Classifier__estimator__n_estimators': [50, 100, 200]
@@ -103,10 +97,8 @@ def build_model():
     # create grid search object
     with parallel_backend('threading', n_jobs=-1):
         cv = GridSearchCV(pipeline, param_grid=parameters, cv=5, scoring='f1_macro', verbose=2)
+        
     return cv
-
-    
-
 
 def evaluate_model(model, X_test, Y_test, category_names):
     """
@@ -128,7 +120,6 @@ def evaluate_model(model, X_test, Y_test, category_names):
     for i in range(number_of_categories):
         print("\nCategory: ", category_names[i])
         print(classification_report(Y_test.iloc[:, i], y_pred[:, i]))
-
 
 def save_model(model, model_filepath):
     """

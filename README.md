@@ -5,6 +5,10 @@ This project is designed to analyze disaster data from Appen (formally Figure 8)
 We provide a web app where an emergency worker can input a new message and get classification results in the pre-defined categories. Furthermore, some visualizations are provided to show the data distribution.
 
 
+https://github.com/naoufal51/disaster_response/assets/15954923/9696d999-a1b8-406f-b87e-4c788b368315
+
+
+
 
 ## Project Components
 ### 1. ETL Pipeline

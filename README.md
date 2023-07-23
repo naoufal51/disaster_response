@@ -1,9 +1,8 @@
 # Disaster Response Pipeline Project
 
-This project is designed to analyze disaster data from Appen (formally Figure 8) to build a model for an API that classifies disaster messages. The provided dataset set contains real messages that were sent during disaster events. For that we build a machine learning pipeline to classify appropriately these events in order to dispatch the messages to the concerned disaster relief agency.
+This project aims to build a model for an API that classifies disaster messages based on disaster data from Appen (formally Figure 8). The provided dataset contains real messages that were sent during disaster events. We build a machine learning pipeline to classify possible disaster events. Then, we dispatch the messages to the concerned disaster relief agency.
 
-We provide a web app where an emergency worker can input a new message and get classification results in the pre-defined categories. Furthermore, some visualizations are provided to show the data distribution.
-
+We provide a web app where an emergency worker can input a new message and get classification results in the pre-defined categories. Furthermore, we provide some visualizations to show the data distribution.
 
 https://github.com/naoufal51/disaster_response/assets/15954923/9696d999-a1b8-406f-b87e-4c788b368315
 
@@ -92,7 +91,7 @@ Then go to http://0.0.0.0:3001/ or http://localhost:3001/
 
 ## Category Imbalance and Model Performance
 ![Category Imbalance](figures/category_imbalance.png)
-This dataset is highly imbalanced as shown in figure above where a large number of categories have very few samples. This imbalance issue can lead to a biased model that favors the majority classes. This issue is even more critical as we are dealing with disaster response messages where we want to make sure that all categories are well represented. 
+This dataset is highly imbalanced as shown in the figure above where a large number of categories have very few samples. This imbalance issue can lead to a biased model that favors the majority classes. This issue is even more critical as we are dealing with disaster response messages where we want to make sure that all categories are well represented. 
 ### Model Performance
 In oder to observe the impact of the imbalance issue, we use the F1 score as a metric to evaluate the model performance. The F1 score is a good metric to assess the balance between precision and recall.
 

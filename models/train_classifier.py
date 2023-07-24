@@ -13,6 +13,7 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.metrics import classification_report
 from sklearn.utils import parallel_backend
 from xgboost import XGBClassifier
+import re
 
 
 def load_data(database_filepath):
@@ -44,7 +45,7 @@ def load_data(database_filepath):
     return X, Y, category_names
 
 def tokenize(text):
-    """Normalize, lemmatize, and tokenize the messages text
+    """Normalize, tokenize, and lemmatize the messages text
     
     Args:
         text: string, message text to be processed (tokenized)  
@@ -55,9 +56,13 @@ def tokenize(text):
     # Normalize text
     text = text.lower()
 
+    # Remove urls
+    url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    text = re.sub(url_regex, 'urlplaceholder', text)
+
     # Remove punctuation
-    translator = str.maketrans('', '', string.punctuation) # This maps punctuation to None
-    text = text.translate(translator) # This removes punctuation
+    translator = str.maketrans('', '', string.punctuation)
+    text = text.translate(translator)
 
     # Get stop words
     stop_words = set(stopwords.words('english'))

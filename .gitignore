@@ -131,3 +131,4 @@ app/.DS_Store
 data/YourDatabaseName.db
 
 app/run.py
+.vscode

@@ -8,7 +8,6 @@ from nltk.tokenize import word_tokenize
 from flask import Flask
 from flask import render_template, request
 from plotly.graph_objs import Bar
-# from sklearn.externals import joblib
 import joblib
 from sqlalchemy import create_engine
 
@@ -56,22 +55,24 @@ def index():
         
     Returns:
         Flask response object with rendered template 
-    """    
-    # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    """   
+    # Count the number of messages by genre
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+
+    # Count the number of messages by category
     category_counts = df.iloc[:, 4:].sum()
     category_names = list(category_counts.index)
 
+
     # Calculate the percentage of messages in each category by genre
-    genre_percentage_data = []
-    for category in category_names:
+    def calculate_genre_percentage(category):
         category_data = df[df[category] == 1]
         category_genre_counts = category_data['genre'].value_counts()
-        category_genre_percentage = (category_genre_counts / category_genre_counts.sum())
-        genre_percentage_data.append(category_genre_percentage)
-    genre_percentage_df = pd.DataFrame(genre_percentage_data, index=category_names)
+        return category_genre_counts / category_genre_counts.sum()
+
+    genre_percentage_df = pd.DataFrame([calculate_genre_percentage(category) for category in category_names], index=category_names)
+
 
     # create visuals
     graphs = [

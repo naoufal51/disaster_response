@@ -14,6 +14,8 @@ from sklearn.metrics import classification_report
 from sklearn.utils import parallel_backend
 from xgboost import XGBClassifier
 import re
+import contractions
+from bs4 import BeautifulSoup
 
 
 def load_data(database_filepath):
@@ -52,28 +54,39 @@ def tokenize(text):
         
     Returns:
         tokens: list of strings, tokenized text
+    Notes:
+    Processing step as referenced in lesson
     """
-    # Normalize text
-    text = text.lower()
+    # expand contractions
+    text = contractions.fix(text)
 
-    # Remove urls
+    # Remove html tags using beautifulsoup (from lesson)
+    soup = BeautifulSoup(text, 'html.parser', from_encoding='utf-8')
+    text = soup.get_text()
+
+    # Remove urls (from lesson)
     url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     text = re.sub(url_regex, 'urlplaceholder', text)
 
+    # remove numbers
+    text = re.sub(r'\d+', '', text)
+
+    # Normalize text
+    text = text.lower()
+
     # Remove punctuation
-    translator = str.maketrans('', '', string.punctuation)
-    text = text.translate(translator)
+    text = text.translate(str.maketrans('', '', string.punctuation))
 
-    # Get stop words
-    stop_words = set(stopwords.words('english'))
-
-    # tokenize text
+    # tokenize
     tokens = word_tokenize(text)
-    tokens = [w for w in tokens if w not in stop_words]
 
-    #lemmatize
+    # remove stop words
+    stop_words = set(stopwords.words('english'))
+    tokens = [word for word in tokens if word not in stop_words]
+
+    # lemmatize
     lemmatizer = nltk.WordNetLemmatizer()
-    tokens = [lemmatizer.lemmatize(w) for w in tokens]
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]
 
     return tokens
 
@@ -91,12 +104,12 @@ def build_model():
     pipeline = Pipeline([
         ('vectorizer', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('Classifier', MultiOutputClassifier(XGBClassifier()))
+        ('classifier', MultiOutputClassifier(XGBClassifier()))
     ])   
 
     # define the parameter for grid search
     parameters = {    
-                'Classifier__estimator__n_estimators': [50, 100, 200]
+                'classifier__estimator__n_estimators': [50, 100, 200]
                 }
     
     # create grid search object

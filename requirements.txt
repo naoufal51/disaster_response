@@ -8,3 +8,7 @@ plotly
 flask
 contractions
 autocorrect
+uvicorn
+beautifulsoup4
+contractions
+gunicorn

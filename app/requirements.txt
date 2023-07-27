@@ -10,3 +10,4 @@ xgboost
 uvicorn
 beautifulsoup4
 contractions
+gunicorn

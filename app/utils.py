@@ -2,7 +2,6 @@ import sys
 import string
 import pickle
 import pandas as pd
-from sqlalchemy import create_engine
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords

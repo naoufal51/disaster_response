@@ -2,5 +2,6 @@ pandas
 nltk
 plotly
 flask
-scikit-learn
+scipy==1.10.1
+scikit-learn==1.2.2
 xgboost

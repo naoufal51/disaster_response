@@ -40,7 +40,7 @@ def tokenize(text):
 df = pd.read_csv('disaster_messages_comb.csv.gz', compression='gzip')
 
 # load model
-model = joblib.load("../models/classifier.pkl")
+model = joblib.load("classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model

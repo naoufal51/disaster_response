@@ -211,6 +211,7 @@ def go():
     Returns:
         Flask response object with rendered go.html template.
     """
+    from utils import tokenize
     # save user input in query
     query = request.args.get('query', '') 
 

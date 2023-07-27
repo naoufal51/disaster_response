@@ -1,0 +1,10 @@
+pandas  
+sqlalchemy 
+nltk
+sklearn
+xgboost
+scikit-learn
+plotly
+flask
+contractions
+autocorrect

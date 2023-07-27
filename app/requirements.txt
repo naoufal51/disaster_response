@@ -3,3 +3,4 @@ nltk
 plotly
 flask
 scikit-learn
+xgboost

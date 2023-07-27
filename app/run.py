@@ -9,8 +9,7 @@ from flask import Flask
 from flask import render_template, request
 from plotly.graph_objs import Bar
 import joblib
-# from sqlalchemy import create_engine
-from utils import tokenize
+from sqlalchemy import create_engine
 
 
 app = Flask(__name__)
@@ -37,9 +36,9 @@ app = Flask(__name__)
 
 
 # load data
-# engine = create_engine('sqlite:///../data/DisasterResponse.db')
-# df = pd.read_sql_table('disaster_messages', engine)
-df = pd.read_csv('disaster_messages_comb.csv.gz', compression='gzip')
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('disaster_messages', engine)
+# df = pd.read_csv('disaster_messages_comb.csv.gz', compression='gzip')
 
 # load model
 model = joblib.load("../models/classifier.pkl")
@@ -147,7 +146,6 @@ def go():
     Returns:
         Flask response object with rendered go.html template.
     """
-    from utils import tokenize
     # save user input in query
     query = request.args.get('query', '') 
 

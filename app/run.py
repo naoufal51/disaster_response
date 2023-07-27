@@ -36,9 +36,9 @@ app = Flask(__name__)
 
 
 # load data
-engine = create_engine('sqlite:///../data/DisasterResponse.db')
-df = pd.read_sql_table('disaster_messages', engine)
-# df = pd.read_csv('disaster_messages_comb.csv.gz', compression='gzip')
+# engine = create_engine('sqlite:///../data/DisasterResponse.db')
+# df = pd.read_sql_table('disaster_messages', engine)
+df = pd.read_csv('disaster_messages_comb.csv.gz', compression='gzip')
 
 # load model
 model = joblib.load("../models/classifier.pkl")

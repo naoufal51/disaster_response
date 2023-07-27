@@ -9,7 +9,7 @@ from flask import Flask
 from flask import render_template, request
 from plotly.graph_objs import Bar
 import joblib
-from sqlalchemy import create_engine
+# from sqlalchemy import create_engine
 
 
 app = Flask(__name__)

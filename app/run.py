@@ -10,29 +10,30 @@ from flask import render_template, request
 from plotly.graph_objs import Bar
 import joblib
 # from sqlalchemy import create_engine
+from utils import tokenize
 
 
 app = Flask(__name__)
 
-def tokenize(text):
-    """
-    Tokenize and lemmatize the disaster messages.
+# def tokenize(text):
+#     """
+#     Tokenize and lemmatize the disaster messages.
     
-    Args:
-        text: string, disaster message to be processed (tokenized)
+#     Args:
+#         text: string, disaster message to be processed (tokenized)
     
-    Returns:
-        clean_tokens: list of strings, tokenized text
-    """
-    tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
+#     Returns:
+#         clean_tokens: list of strings, tokenized text
+#     """
+#     tokens = word_tokenize(text)
+#     lemmatizer = WordNetLemmatizer()
 
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
+#     clean_tokens = []
+#     for tok in tokens:
+#         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+#         clean_tokens.append(clean_tok)
 
-    return clean_tokens
+#     return clean_tokens
 
 # load data
 # engine = create_engine('sqlite:///../data/DisasterResponse.db')

@@ -1,3 +1,4 @@
+import sys
 import json
 import plotly
 import pandas as pd
@@ -10,6 +11,7 @@ from flask import render_template, request
 from plotly.graph_objs import Bar
 import joblib
 from sqlalchemy import create_engine
+from utils.utils import tokenize
 
 
 app = Flask(__name__)
@@ -34,13 +36,10 @@ app = Flask(__name__)
 
 #     return clean_tokens
 
-
 # load data
-# engine = create_engine('sqlite:///../data/DisasterResponse.db')
 engine = create_engine('sqlite:///data/DisasterResponse.db')
 df = pd.read_sql_table('disaster_messages', engine)
-# df = pd.read_csv('disaster_messages_comb.csv.gz', compression='gzip')
-
+print('data loaded')
 # load model
 model = joblib.load("./models/classifier.pkl")
 
@@ -163,7 +162,7 @@ def go():
 
 
 def main():
-    app.run()
+    app.run(host='0.0.0.0', port=3001, debug=True)
 
 
 if __name__ == '__main__':

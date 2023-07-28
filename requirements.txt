@@ -1,9 +1,8 @@
 pandas  
 sqlalchemy 
 nltk
-sklearn
-xgboost
-scikit-learn
+xgboost==1.7.5
+scikit-learn==1.2.2
 plotly
 flask
 contractions

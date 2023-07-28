@@ -8,7 +8,9 @@ import contractions
 from bs4 import BeautifulSoup
 
 
-
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 def tokenize(text):
     """Normalize, tokenize, and lemmatize the messages text
     

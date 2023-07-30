@@ -26,6 +26,7 @@ ML pipeline in a Python script, `train_classifier.py`, to train and export a cla
     - Loads data from the SQLite database
     - Tokenizes and lemmatizes text data
     - Builds an ML pipeline using `CountVectorizer`, `TfidfTransformer`, and `MultiOutputClassifier`
+    - Add features such as `negation_counter`, `verb_counter`, `emotion_counter`, `punctuation_counter`, `text_length`, `capitalization_counter`, `subjectivity`, `polarity`, `ner`.
     - Trains and tunes a model using `GridSearchCV`
     - Outputs results on the test set
     - Exports the final model as a pickle file
@@ -46,6 +47,10 @@ A Flask web app that shows data visualizations and classifies disaster messages.
 - Flask
 - Plotly
 - SQLAlchemy
+- SpaCy
+- TextBlob
+- gunicorn
+- contractions
 
 ### Installation
 - Clone the repository
@@ -80,14 +85,15 @@ python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl
 ### Flask Web App
 To run the Flask web app, run the following command:
 ```bash
-python run.py
+gunicorn app.run:app 
 ```
-Then go to http://0.0.0.0:3001/ or http://localhost:3001/
+Then go to http://127.0.0.1:8000 or http://localhost:8000/
 
 ## Web App Screenshots
 ### Home Page
 ![Home Page](figures/webapp_interface.png)
 
+![Home Page cont](figures/webapp_interface_cont.png)
 ### Classification Results
 ![Classification Results](figures/webapp_classification.png)
 
@@ -100,4 +106,5 @@ In oder to observe the impact of the imbalance issue, we use the F1 score as a m
 
 ## Acknowledgements
 - [Appen](https://appen.com/) for providing the dataset
+- [NRC](https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm) for providing NRC Emotion Lexicon. 
 

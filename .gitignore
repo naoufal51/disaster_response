@@ -132,3 +132,7 @@ data/YourDatabaseName.db
 
 app/run.py
 .vscode
+reports/.DS_Store
+test.ipynb
+.gitignore
+.DS_Store

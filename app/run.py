@@ -3,42 +3,21 @@ import json
 import plotly
 import pandas as pd
 
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
-
 from flask import Flask
 from flask import render_template, request
 from plotly.graph_objs import Bar
 import joblib
 from sqlalchemy import create_engine
-from utils.utils import tokenize
+from utils.utils import *
 
 
 app = Flask(__name__)
 
-# def tokenize(text):
-#     """
-#     Tokenize and lemmatize the disaster messages.
-    
-#     Args:
-#         text: string, disaster message to be processed (tokenized)
-    
-#     Returns:
-#         clean_tokens: list of strings, tokenized text
-#     """
-#     tokens = word_tokenize(text)
-#     lemmatizer = WordNetLemmatizer()
-
-#     clean_tokens = []
-#     for tok in tokens:
-#         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-#         clean_tokens.append(clean_tok)
-
-#     return clean_tokens
-
 # load data
 engine = create_engine('sqlite:///data/DisasterResponse.db')
 df = pd.read_sql_table('disaster_messages', engine)
+# drop child alone column (no positive instances)
+df.drop(['child_alone'], axis=1, inplace=True)
 print('data loaded')
 # load model
 model = joblib.load("./models/classifier.pkl")
@@ -67,13 +46,57 @@ def index():
     category_names = list(category_counts.index)
 
 
-    # Calculate the percentage of messages in each category by genre
-    def calculate_genre_percentage(category):
-        category_data = df[df[category] == 1]
-        category_genre_counts = category_data['genre'].value_counts()
-        return category_genre_counts / category_genre_counts.sum()
 
-    genre_percentage_df = pd.DataFrame([calculate_genre_percentage(category) for category in category_names], index=category_names)
+    # Calculate the percentage of messages in each category by genre
+    def calculate_genre_percentage(df, category_names):
+        """
+        Calculate the percentage of messages in each category by genre.
+
+        Args:
+            category_names (list): list of names of categories present in the dataset
+            df (pd.DataFrame): dataframe with the messages and their categories and genre
+            
+        Returns:
+            genre_percentage_df (pd.DataFrame): dataframe with the percentage of messages in each category by genre
+        
+        """
+        genre_percentage_df = pd.DataFrame()
+        for category in category_names:
+            category_data = df[df[category] == 1]
+            category_genre_counts = category_data['genre'].value_counts()
+            genre_percentage_df[category] = category_genre_counts / category_genre_counts.sum()
+        genre_percentage_df = genre_percentage_df.T
+        return genre_percentage_df
+    
+    def compute_categoty_message_length(df, category_names):
+        """
+        Calculate the average message length by category.
+
+        Args:
+            category_names (list): list of names of categories present in the dataset
+            df (pd.DataFrame): dataframe with the messages and their categories and genre
+            
+        Returns:
+            category_length (pd.DataFrame): dataframe with the average message length by category
+        
+        """
+        category_length ={}
+        for category in category_names:
+            category_data = df[df[category] == 1]
+            category_length[category] = category_data['message_length'].mean()
+        category_length = pd.Series(category_length)
+        category_length = category_length.sort_values(ascending=False)
+        return category_length
+
+    genre_percentage_df = calculate_genre_percentage(df, category_names)
+
+    # Compute message length by genre
+    df['message_length'] = df['message'].apply(lambda x: len(x.split()))
+    genre_length = df.groupby(['genre'])['message_length'].mean()
+    genre_names_l = list(genre_length.index)
+
+    # Comote message length by category
+    category_length = compute_categoty_message_length(df, category_names)
 
 
     # create visuals
@@ -125,6 +148,43 @@ def index():
                 },
                 'barmode': 'stack'
             }
+        },
+        {
+            'data': [
+                Bar(
+                    x=genre_names_l,
+                    y=genre_length
+                )
+            ],
+            'layout': {
+                'title': 'Average Message Length by Genre',
+                'yaxis': {
+                    'title': "Message Length",
+                    },
+                'xaxis': {
+                'title': "Message Genre"
+                    
+            }
+        }
+        },
+        {
+            'data': [
+                Bar(
+                    x=category_length.index,
+                    y= category_length.values,
+                )
+            ],
+            'layout': {
+                'title': 'Average Message Length by Category',
+                'yaxis': {
+                    'title': "Message Length",
+                    },
+                'xaxis': {
+                'title': "Message Category",
+                'tickangle': 45
+                    
+            }
+        }
         }
     ]
     # encode plotly graphs in JSON

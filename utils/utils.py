@@ -25,6 +25,7 @@ else:
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 
 
 def tokenize(text):
@@ -35,7 +36,7 @@ def tokenize(text):
         
     Returns:
         tokens: list of strings, tokenized text
-        
+
     Notes:
         Processing step as referenced in lesson
     """

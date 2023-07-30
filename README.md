@@ -7,6 +7,7 @@ We provide a web app where an emergency worker can input a new message and get c
 
 https://github.com/naoufal51/disaster_response/assets/15954923/63695160-ae94-4165-968a-0b93e9e9e035
 
+You can access a live version of the app if you click on the image below:
 
 
 
@@ -83,6 +84,8 @@ To run the ML pipeline that trains classifier and saves, run the following comma
 python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl
 ```
 ### Flask Web App
+You can choose to run the app with the model with or without NER (`classifier_light.pkl`). Go to `app/run.py` to make the necessary changes.
+
 To run the Flask web app, run the following command:
 ```bash
 gunicorn app.run:app 

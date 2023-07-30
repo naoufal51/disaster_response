@@ -20,7 +20,7 @@ df = pd.read_sql_table('disaster_messages', engine)
 df.drop(['child_alone'], axis=1, inplace=True)
 print('data loaded')
 # load model
-model = joblib.load("./models/classifier.pkl")
+model = joblib.load("./models/classifier_light.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model

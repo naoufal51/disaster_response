@@ -81,6 +81,7 @@ def build_model():
         ('classifier', MultiOutputClassifier(XGBClassifier(random_state=42)))
             
     ])   
+
     parameters = {    
         'features__text_pipeline__vectorizer__ngram_range': [(1, 1), (1, 2)],
         'classifier__estimator__n_estimators': [50, 100, 200],

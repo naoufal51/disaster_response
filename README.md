@@ -9,7 +9,9 @@ https://github.com/naoufal51/disaster_response/assets/15954923/63695160-ae94-416
 
 You can access a live version of the app if you click on the image below:
 
-
+<a href="https://disasterapp.onrender.com/">
+  <img src="figures/family.png" width="200" height="200" alt="Disaster Response Webapp">
+</a>
 
 
 ## Project Components

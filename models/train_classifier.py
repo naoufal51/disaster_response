@@ -1,22 +1,22 @@
 import sys
-import string
+import os
 import pickle
 import pandas as pd
 from sqlalchemy import create_engine
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, make_scorer, f1_score
 from sklearn.utils import parallel_backend
+
 from xgboost import XGBClassifier
-import re
-import contractions
-from bs4 import BeautifulSoup
-from utils.utils import tokenize
+from utils.utils import (tokenize, VerbCountExtractor, NegationCountExtractor, EmotionWordCountExtractor, 
+                         PunctuationCountExtractor, TextLengthExtractor, CapitalizationCountExtractor,
+                         SubjectivityExtractor, PolarityExtractor, NamedEntityCounter)
+from tabulate import tabulate
+
 
 
 def load_data(database_filepath):
@@ -38,6 +38,7 @@ def load_data(database_filepath):
     # define features and target variables X and Y
     X = disaster_messages['message']
     Y = disaster_messages.iloc[:, 4:]
+    Y = Y.drop('child_alone', axis=1)
 
     # replace 2 with 1 in related column
     Y['related'] = Y['related'].replace(2,1)
@@ -61,42 +62,70 @@ def build_model():
     """
     # create pipeline
     pipeline = Pipeline([
-        ('vectorizer', CountVectorizer(tokenizer=tokenize)),
-        ('tfidf', TfidfTransformer()),
-        ('classifier', MultiOutputClassifier(XGBClassifier()))
+        ('features', FeatureUnion([
+            ('text_pipeline', Pipeline([
+                ('vectorizer', CountVectorizer(tokenizer=tokenize)),
+                ('tfidf', TfidfTransformer())
+            ])),
+            ('negation_counter', NegationCountExtractor()),
+            ('verb_counter', VerbCountExtractor()),
+            ('emotion_counter', EmotionWordCountExtractor('data/NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')),
+            ('punctuation_counter', PunctuationCountExtractor(['!', '?'])),
+            ('text_length', TextLengthExtractor()),
+            ('capitalization_counter', CapitalizationCountExtractor()),
+            ('subjectivity', SubjectivityExtractor()),
+            ('polarity', PolarityExtractor()),
+            ('ner', NamedEntityCounter())
+            
+        ])),
+        ('classifier', MultiOutputClassifier(XGBClassifier(random_state=42)))
+            
     ])   
-
-    # define the parameter for grid search
     parameters = {    
-                'classifier__estimator__n_estimators': [200]
-                }
+        'features__text_pipeline__vectorizer__ngram_range': [(1, 1), (1, 2)],
+        'classifier__estimator__n_estimators': [50, 100, 200],
+        'classifier__estimator__learning_rate': [0.1, 0.3],
+    }
+
+    # define a metric
+    f1 = make_scorer(f1_score, average='micro')
     
     # create grid search object
     with parallel_backend('threading', n_jobs=-1):
-        cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, scoring='f1_macro', verbose=2)
+        cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, scoring=f1, verbose=2)
         
     return cv
 
-def evaluate_model(model, X_test, Y_test, category_names):
+
+
+def evaluate_model(model, X_test, Y_test, category_names, save_path):
     """
     Evaluate the model using test data.
+    We evaluate using f1 score, precision and recall.
     
     Args:
         model: model to be evaluated
         X_test: test features
         Y_test: test target
         category_names: list of category names
+        save_path: path to md file for report saving
     
     Returns:
         None
     """
     y_pred = model.predict(X_test)
+
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
     
-    # print the classification report for each category (f1 score, precision, recall)
-    number_of_categories = Y_test.shape[1]
-    for i in range(number_of_categories):
-        print("\nCategory: ", category_names[i])
-        print(classification_report(Y_test.iloc[:, i], y_pred[:, i]))
+    with open(save_path, 'w') as file:
+        number_of_categories = Y_test.shape[1]
+        for i in range(number_of_categories):
+            file.write(f"\n## Category: {category_names[i]}\n")
+            class_report =  pd.DataFrame(classification_report(Y_test.iloc[:, i], y_pred[:, i], labels=[0,1], output_dict=True)).transpose()
+            class_report = class_report.iloc[0:2, :]
+            file.write(tabulate(class_report, headers='keys', tablefmt='pipe'))
+
+
 
 def save_model(model, model_filepath):
     """
@@ -114,20 +143,27 @@ def save_model(model, model_filepath):
 
 
 def main():
+    
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
         
         print('Building model...')
         model = build_model()
         
         print('Training model...')
         model.fit(X_train, Y_train)
+
+        # Print best parameters
+        print("Best Parameters:", model.best_params_)
         
         print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test, category_names)
+        # evaluate_model(model, X_test, Y_test, category_names)
+        rp_path = './reports/'
+        evaluate_model(model, X_test, Y_test, category_names, f'{rp_path}classification_report.md')
+
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)

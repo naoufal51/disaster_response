@@ -138,7 +138,7 @@ def index():
                 ),
             ],
             'layout': {
-                'title': 'Distribution of messages across categories and genres',
+                'title': 'Distribution of Messages Across Categories and Genres',
                 'yaxis': {
                     'title': "Proporation"
                 },

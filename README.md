@@ -42,7 +42,7 @@ A Flask web app that shows data visualizations and runs the inference using trai
     - A Flask app that runs the web app accessible in `app/run.py`. 
     - Mutliple visualizations are accessible such as:
         * Distribution of Message Genres
-        * Distribution of messages across categories and genres
+        * Distribution of Messages Across Categories and Genres
         * Average Message Length by Genre
         * Average Message Length by Category
 
@@ -111,8 +111,14 @@ Then go to http://127.0.0.1:8000 or http://localhost:8000/
 ## Category Imbalance and Model Performance
 ![Category Imbalance](figures/category_imbalance.png)
 This dataset is highly imbalanced as shown in the figure above where a large number of categories have very few samples. This imbalance issue can lead to a biased model that favors the majority classes. This issue is even more critical as we are dealing with disaster response messages where we want to make sure that all categories are well represented. 
-### Model Performance
-In oder to observe the impact of the imbalance issue, we use the F1 score as a metric to evaluate the model performance. The F1 score is a good metric to assess the balance between precision and recall.
+There are several techniques to mitigate this issue:
+1. Resampling: Majority undersampling or minority oversampling.
+2. SMOTE (Synthetic Minority Over-Sampling Techniques): Instead of simple oversampling of minority classes. SMOTE exploits the feature space to create a new synthetic sample based on k-nearest neighbors.
+3. Data augmentation: There exist multiple strategies to generate text using data augmentation. Synonym replacement, random insertion, and random deletion are among them.
+4. Cost-Sensitive Learning: Apply a penalty score in misclassified instances to decrease the total misclassification cost.
+5. Ensemble Methods: Bagging or Boosting can mitigate class imbalance. 
+
+In oder to accurately evalute our model in the presence of class imbalance issues, we use the F1 score as a metric to evaluate the model performance. The F1 score is a good metric to assess the balance between precision and recall.
 
 
 ## Acknowledgements

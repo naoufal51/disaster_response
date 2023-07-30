@@ -29,7 +29,8 @@ nltk.download('averaged_perceptron_tagger')
 
 
 def tokenize(text):
-    """Normalize, tokenize, and lemmatize the messages text
+    """Normalize, tokenize, and lemmatize the messages text.
+    Also removes html tags, urls, numbers and punctuation.
     
     Args:
         text: string, message text to be processed (tokenized)  

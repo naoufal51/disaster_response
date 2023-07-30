@@ -17,7 +17,7 @@ https://github.com/naoufal51/disaster_response/assets/15954923/63695160-ae94-416
 
 ## Project Components
 ### 1. ETL Pipeline
-ETL in a Python script, `process_data.py`, to prepare the data. The script performs the following tasks:
+The ETL pipeline, `process_data.py`, is used to to prepare the data:
 
     - Loads the messages and categories datasets
     - Merges the two datasets
@@ -25,21 +25,26 @@ ETL in a Python script, `process_data.py`, to prepare the data. The script perfo
     - Stores the clean data in a SQLite database
 
 ### 2. ML Pipeline
-ML pipeline in a Python script, `train_classifier.py`, to train and export a classifier. The script performs the following tasks:
+The ML pipeline ,`train_classifier.py`, is used to train and export a classifier:
 
     - Loads data from the SQLite database
     - Tokenizes and lemmatizes text data
     - Builds an ML pipeline using `CountVectorizer`, `TfidfTransformer`, and `MultiOutputClassifier`
-    - Add features such as `negation_counter`, `verb_counter`, `emotion_counter`, `punctuation_counter`, `text_length`, `capitalization_counter`, `subjectivity`, `polarity`, `ner`.
+    - Add features such as `negation_counter`, `verb_counter`, `emotion_counter`, `punctuation_counter`, `text_length`, `capitalization_counter`, `subjectivity`, `polarity`, `ner`(not in the light version).
     - Trains and tunes a model using `GridSearchCV`
-    - Outputs results on the test set
-    - Exports the final model as a pickle file
+    - Outputs results on the test set in `reports/classification_report.md`
+    - Exports the final model as a pickle file in `models/classifier.pkl`
 
 ### 3. Web App
-A Flask web app that shows data visualizations and classifies disaster messages. The web app includes:
+A Flask web app that shows data visualizations and runs the inference using trained model to classify disaster messages. The web app includes:
 
     - A data visualization using Plotly in the `go.html` template file
-    - A Flask app that runs the web app
+    - A Flask app that runs the web app accessible in `app/run.py`. 
+    - Mutliple visualizations are accessible such as:
+        * Distribution of Message Genres
+        * Distribution of messages across categories and genres
+        * Average Message Length by Genre
+        * Average Message Length by Category
 
 ## Getting Started
 ### Dependencies

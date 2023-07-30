@@ -118,8 +118,7 @@ There are several techniques to mitigate this issue:
 4. **Cost-Sensitive Learning:** Apply a penalty score in misclassified instances to decrease the total misclassification cost.
 5. **Ensemble Methods:** Bagging or Boosting can mitigate class imbalance. 
 
-In oder to accurately evalute our model in the presence of class imbalance issues, we use the F1 score as a metric to evaluate the model performance. The F1 score is a good metric to assess the balance between precision and recall.
-
+In order to accurately evaluate our model in the presence of class imbalance issues, we use the F1 score as a metric to evaluate the model performance. The F1 score is a good metric to assess the balance between precision and recall.
 
 ## Acknowledgements
 - [Appen](https://appen.com/) for providing the dataset

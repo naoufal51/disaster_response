@@ -5,7 +5,7 @@ This project aims to build a model for an API that classifies disaster messages 
 We provide a web app where an emergency worker can input a new message and get classification results in the pre-defined categories. Furthermore, we provide some visualizations to show the data distribution.
 
 
-https://github.com/naoufal51/disaster_response/assets/15954923/d3807e73-b3fa-4484-9b40-e0be9763337b
+https://github.com/naoufal51/disaster_response/assets/15954923/63695160-ae94-4165-968a-0b93e9e9e035
 
 
 

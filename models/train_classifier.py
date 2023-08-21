@@ -48,9 +48,6 @@ def load_data(database_filepath):
     Y = disaster_messages.iloc[:, 4:]
     Y = Y.drop("child_alone", axis=1)
 
-    # replace 2 with 1 in related column
-    Y["related"] = Y["related"].replace(2, 1)
-
     # get category names
     category_names = Y.columns
 

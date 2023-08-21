@@ -8,7 +8,8 @@ We provide a web app where an emergency worker can input a new message and get c
 https://github.com/naoufal51/disaster_response/assets/15954923/63695160-ae94-4165-968a-0b93e9e9e035
 
 ## Live Web app:
-**click on the image below**
+**click on the image below** 
+*Note:* You can visalize the app but the model might not work due to limited resources on the Free tier of  render.com
 
 <a href="https://disasterapp.onrender.com/">
   <img src="figures/family.png" width="200" height="200" alt="Disaster Response Webapp. Generate by hotpot.ai.">

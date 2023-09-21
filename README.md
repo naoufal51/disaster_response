@@ -122,6 +122,20 @@ There are several techniques to mitigate this issue:
 
 In order to accurately evaluate our model in the presence of class imbalance issues, we use the F1 score as a metric to evaluate the model performance. The F1 score is a good metric to assess the balance between precision and recall.
 
+## (Optional) Advanced Modeling with Transformers
+In addition to the models mentioned above, we also explored leveraging state-of-the-art transformer models using the Hugging Face Transformers library in a Kaggle Notebook. This approach allows us to tap into powerful pre-trained models like BERT, which have achieved high performance across a variety of NLP tasks, including text classification.
+
+### Overview:
+- **Loading:** We employ `AutoTokenizer` and `AutoModelForSequenceClassification` for tokenizing and loading the ‘bert-base-uncased’ model.
+- **Training & Evaluation:** The model is trained using the `Trainer` class, with a weighted loss function for class imbalance, and evaluated using metrics like accuracy and F1 score on a test set.
+- **Experimentation:** For those with ample computational resources, the notebook in the repository provides an optional, more sophisticated methodology, offering the possibility for further tuning and experimentation.
+
+### Note:
+Given the resource-intensive nature of transformer models, consideration is required for deployment in constrained environments.
+
+You can refer to the provided [kaggle notebook](https://www.kaggle.com/code/naoufal51/disaster-pipeline-transformer) for a detailed walk-through and implementation.
+
+---
 ## Acknowledgements
 - [Appen](https://appen.com/) for providing the dataset
 - [NRC](https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm) for providing NRC Emotion Lexicon. 
